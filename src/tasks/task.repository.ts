@@ -12,7 +12,7 @@ export class TaskRepository extends Repository<Task> {
 
         const task = new Task();
         task.title = title;
-        task.decription = description;
+        task.description = description;
         task.status = TaskStatus.OPEN;
         await task.save();
 
@@ -22,7 +22,15 @@ export class TaskRepository extends Repository<Task> {
     public async getTasks(filterDto: GetTasksFilterDTO): Promise<Array<Task>> {
         const { status, search } = filterDto;
         const query = this.createQueryBuilder('task');
-        
+
+        if (status) {
+            query.andWhere('task.status = :status', { status });
+        }
+
+        if (search) {
+            query.andWhere('task.title LIKE :search OR task.description LIKE :search', { search: `%${search}%` });
+        }
+
         const tasks = await query.getMany();
 
         return tasks;
