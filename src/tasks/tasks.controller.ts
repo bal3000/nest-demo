@@ -20,8 +20,8 @@ export class TasksController {
     }
 
     @Get('/:id') 
-    public getTask(@Param('id', ParseIntPipe) id: number): Promise<Task> {
-        return this.taskService.getTasksById(id);
+    public getTask(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<Task> {
+        return this.taskService.getTasksById(id, user);
     }
 
     @Post()
@@ -31,12 +31,16 @@ export class TasksController {
     }
 
     @Delete('/:id')
-    public deleteTask(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
-        return this.taskService.deleteTaskById(id);
+    public deleteTask(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<boolean> {
+        return this.taskService.deleteTaskById(id, user);
     }
 
     @Patch('/:id/status')
-    public updateTask(@Param('id', ParseIntPipe) id: number, @Body(TaskStatusValidationPipe) task: UpdateTaskDTO): Promise<Task> {
-        return this.taskService.updateTaskById(id, task);
+    public updateTask(
+        @Param('id', ParseIntPipe) id: number, 
+        @Body(TaskStatusValidationPipe) task: UpdateTaskDTO,
+        @GetUser() user: User
+    ): Promise<Task> {
+        return this.taskService.updateTaskById(id, task, user);
     }
 }
